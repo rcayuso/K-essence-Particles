@@ -1,0 +1,5 @@
+FIRST you run the ID codes. 
+
+Once the ID codes have been run, you will have to restart the simulation of the relaxation code from checkpoin using the Evolution code. 
+
+Once the Evolution code is done running you can run teh postprocessing. 
