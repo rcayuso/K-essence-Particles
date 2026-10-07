@@ -1,0 +1,59 @@
+#! /usr/sbin/smake
+#
+FC      = gfortran 
+F90     = gfortran
+CC      = ifc
+LD      = $(F90)
+MOD     = mod
+SWP     =
+RM      = /bin/rm -f
+MP      =
+ABI     =
+ISA     =
+ARCH    = 
+OLEVEL  = -O3
+FOPTS   = -O3
+F90OPTS = -O3 #-W0# -H aesu
+COPTS   =
+LIBS    =  
+LDFLAGS = 
+LIBPATH = -L/usr/local/intel81/lib/
+F90FLAGS= $(ARCH) $(OLEVEL) $(F90OPTS) -ffree-line-length-180 -fdefault-real-8 -cpp
+FFLAGS  = $(ARCH) $(OLEVEL) $(FOPTS)
+CFLAGS  = $(ARCH) $(OLEVEL) $(COPTS)
+LIBFLAGS = $(LIBPATH) $(LIBS)
+PROF    =
+
+PROG =	wave
+
+SRCS =	boundary.f90 derivs.f90  Newton-rapson.f90 Kretchman_scalar.f90 evolve.f90  initial.f90 main.f90 rhs.f90 params.f90 tempvars.f90 tempvars1.f90 tempvars2.f90 tempvars3.f90 tempvars4.f90  eeqns.f90 extraeqns_S_dtKrr.f90 extraeqns_S_dtKT.f90 extraeqns_S_dtpip.f90 extraeqns_S_dtrho.f90 initial_extraeqns_S_Ham.f90 initial_extraeqns_S_Mom.f90
+
+OBJS =	boundary.o derivs.o  Newton-rapson.o Kretchman_scalar.o evolve.o  initial.o main.o rhs.o params.o tempvars.o tempvars1.o tempvars2.o tempvars3.o tempvars4.o eeqns.o extraeqns_S_dtKrr.o extraeqns_S_dtKT.o extraeqns_S_dtpip.o extraeqns_S_dtrho.o initial_extraeqns_S_Ham.o initial_extraeqns_S_Mom.o 
+
+all: $(PROG)
+
+$(PROG): $(OBJS)
+	$(F90) $(LDFLAGS) -o $@ $(OBJS) $(LIBFLAGS)
+
+clean:
+	rm -f $(PROG) $(OBJS) *.$(MOD)
+
+tar:
+	tar cf `basename $(PWD)`.tar $(SRCS) *.in makemake makefile makefile.* Makefile Config lib Backup Batch Inputs
+	gzip -f `basename $(PWD)`.tar
+
+.SUFFIXES: $(SUFFIXES) .f90
+
+.f90.o:
+	$(F90) $(F90FLAGS) -c $<
+
+boundary.o:params.o
+Newton-rapson.o:params.o evolve.o
+evolve.o: boundary.o derivs.o rhs.o
+main.o: params.o evolve.o initial.o Kretchman_scalar.o
+rhs.o: tempvars.o eeqns.o extraeqns_S_dtKrr.o extraeqns_S_dtKT.o extraeqns_S_dtpip.o extraeqns_S_dtrho.o initial_extraeqns_S_Ham.o initial_extraeqns_S_Mom.o
+eeqns.o: tempvars.o params.o tempvars1.o tempvars2.o tempvars3.o tempvars4.o
+extraeqns_dtKrr.o : tempvars1.o params.o
+extraeqns_dtKT.o : tempvars2.o params.o
+extraeqns_dtpip.o : tempvars3.o params.o
+extraeqns_dtrho.o : tempvars4.o params.o

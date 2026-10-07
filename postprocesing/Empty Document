@@ -1,0 +1,3 @@
+First run read_hdf5.py to go from outpust_sphere_i to data_outpusphere_i (whwere i is the index of the sphere)
+Then run analisis_onda.py for each one of the spheres (you have to go inside the script and change the sphere index). This will create .dat files containing the different modes of the psi field. You can also change which field to extract the modes from but you have to do it consistently in the read_hdf and of course on the main code par file to make sure you are extracting the desired field on the spheres.
+The extrapolation_dipole.py and extrapolation_quadrupole.py ude the corresponding mode at each sphere and extrapolate to infinity to five the value of the corresponding coefficient. 

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mms:spatialOperatorDiscretization xmlns:mms="urn:mathms">
+   <mms:head>
+      <mms:name>Operator crossed</mms:name>
+      <mms:id>e34a0142-ee79-3936-8c58-2efec352df9b</mms:id>
+      <mms:author>Carlos Palenzuela</mms:author>
+      <mms:version>1</mms:version>
+      <mms:date>2016-10-19T00:00:00</mms:date>
+   </mms:head>
+   <mms:discretizations>
+      <mms:discretization>
+         <mms:derivativeType>
+            <mms:derivativeOrder>1</mms:derivativeOrder>
+            <mms:coordinateCombination>i</mms:coordinateCombination>
+         </mms:derivativeType>
+         <mms:mainSchema>
+            <mms:name>D1-CD-O4</mms:name>
+            <mms:id>0eba75db-13fe-3285-838d-93515a068cd3</mms:id>
+         </mms:mainSchema>
+      </mms:discretization>
+      <mms:discretization>
+         <mms:derivativeType>
+            <mms:derivativeOrder>2</mms:derivativeOrder>
+            <mms:coordinateCombination>ii</mms:coordinateCombination>
+         </mms:derivativeType>
+         <mms:mainSchema>
+            <mms:name>D2-CD-O4</mms:name>
+            <mms:id>33c5616c-28f2-35b9-bfcf-53f1dc34f4cf</mms:id>
+         </mms:mainSchema>
+      </mms:discretization>
+      <mms:discretization>
+         <mms:derivativeType>
+            <mms:derivativeOrder>2</mms:derivativeOrder>
+            <mms:coordinateCombination>ij</mms:coordinateCombination>
+         </mms:derivativeType>
+         <mms:mainSchema>
+            <mms:name>D1-CD-O4 crossed</mms:name>
+            <mms:id>94c5e381-d51f-338c-b773-833dac9e1199</mms:id>
+         </mms:mainSchema>
+      </mms:discretization>
+   </mms:discretizations>
+</mms:spatialOperatorDiscretization>

@@ -1,0 +1,329 @@
+//Problem specific parameters
+Problem {
+	tend = 30.0
+	max_error = 1e-10
+	phi_asymptotic = 0.0
+	Phid_x_asymptotic = 0.0
+	Phid_y_asymptotic = 0.0
+	Phid_z_asymptotic = 0.0
+	Psisf_asymptotic = 0.0
+	phi_falloff = 1.0
+	Phid_x_falloff = 2.0
+	Phid_y_falloff = 2.0
+	Phid_z_falloff = 2.0
+	Psisf_falloff = 1.0
+	Aphi0 = 1.0
+	Aphi1 = 1.0
+	sigmax = 1.0
+	betax = 1.0
+	gammax = -1e17
+	Mpl_cte = 0.1994711401
+	p_sigma = 3.35
+	phi_init = 0.0
+	p_Omega = 1.0
+	tini = 0.0
+	tslow = 1.0
+	torbit = 800.0
+	tslow2 = 2.0
+	sigmaslow = 10.0
+	mass = 1.0
+	massfactor = 2877.503896
+	xcenter1 = 0.0
+	ycenter1 = 0.0
+	zcenter1 = 0.0
+	rorbit = 15.0
+	rstart = 150.0
+	rdonut = 4.0
+	Nstar = 1
+	wd = 0.5
+	xf = 15.0
+	nu = 1.0
+	nu_asymp = 1.0
+	nu_radius = 1.0
+	nu_width = 1.0
+	offw = 1.0
+	timehyper = 2000.0
+	mu = 0.5
+	dissipation_factor_Psisf = 0.0
+	dissipation_factor_Psisf = 0.0
+	dissipation_factor_phi = 0.0
+	dissipation_factor_Phid_x = 0.0
+	dissipation_factor_Phid_x = 0.0
+	dissipation_factor_Phid_y = 0.0
+	dissipation_factor_Phid_y = 0.0
+	dissipation_factor_Phid_z = 0.0
+	dissipation_factor_Phid_z = 0.0
+	dissipation_factor_Psi = 0.0
+	dissipation_factor_Psi = 0.0
+	random_seed = 0
+	subcycling = "BERGER-OLIGER" // "BERGER-OLIGER", "DISABLED"
+	//Regridding options
+	regridding {
+		//There are currently three regridding strategies, Gradient, Function and Shadow
+		// Spatial interpolator
+		interpolator = "QUINTIC_REFINE"    //"LINEAR_REFINE", "CUBIC_REFINE" or "QUINTIC_REFINE"
+		//Common regridding parameters
+		regridding_buffer = 0	//Number of extra cells surrounding regridding criteria (this value cannot be greater than smallest_patch_size)
+		regridding_min_level = 1	//First level number to check regridding from
+		regridding_max_level = 100	//Last level number to check regridding from
+		// GRADIENT. A cell will be refined when the gradient of the field on any neighbour cell is greater than the next nearest cell gradient with a compression factor and an offset. 
+		// The conditional formula is: ∇f(i) > C * MIN(∇f(i+1), ∇f(i-1)) + O * dx^2.
+		//regridding_type = "GRADIENT"
+		//regridding_field = "Psisf"	// is the field in which to check gradient
+		//regridding_compressionFactor = 3	// is the compression factor for the tagging algorithm (*C* in the formula)
+		//regridding_mOffset = 50			// is the offset for the tagging algorithm (*O* in the formula)
+		// FUNCTION. The cell is refined if the provided field is greater than a given threshold.
+		regridding_type = "FUNCTION"
+		regridding_function_field = "Psisf"		// is the field in which to check the threshold.
+		regridding_threshold = 0.5			//is the threshold for the field
+		// SHADOW. Two same field at different or equivalent times are compared, if the relative difference is greater than a given error, the cell is to be refined.		//regridding_type = "SHADOW"
+		//regridding_fields = "Psisf_p" "Psisf"		// the two fields to compare
+		//regridding_error = 1e-5			// is the relative error threshold
+	}
+	/*
+	 * External EOS parameters
+	 * ReprimAnd EO
+	 * External library based on https://arxiv.org/abs/2005.01821
+	 * Requires installation of the library at https://zenodo.org/record/4075317#.X9nVJ8J7nJk
+	 */
+	external_EOS {
+		// 0:Ideal Gas, 1:Hybrid, 2:Tabular
+		eos_type = 2
+		atmo_rho = 1e-12
+		atmo_Ye = 0.5
+		rho_strict = 5.0e-5
+		c2p_acc = 1e-8
+		max_b = 10.0
+		max_z = 1000.0
+		//Parameters for Ideal Gas and Hybrid EOS
+		max_rho = 1e6
+		max_eps = 11.0
+		gamma_th = 1.75
+	}
+}
+
+Main {
+	// Screen ouput information interval (In coarser level cycle units). It includes the information of all levels.
+	output_interval = 1            	  // zero to turn off
+	// Screen information interval of execution time (In coarser level cycle units)
+	timer_output_interval = 1            // zero to turn off
+	// Restart configuration
+	// The following parameter set if the simulation starts from a checkpoint or from scratch
+	start_from_restart = FALSE
+	// Interval to save checkpoints for restarting (In coarser level cycle units)
+	restart_interval = 0
+	// Iteration to restart from (if start_from_restart = TRUE) (In coarser level cycle units)
+	restart_iteration = 0
+	// Directory to store the checkpoints and to take the checkpoint for a restart
+	restart_dirname = "checkpoint.restart"
+	// To force a processor rebalance
+	rebalance_processors = FALSE
+	// dt. It should be calculated as < CFL / Vmax * (x_hi - x_lo) / Nx. 
+	// Being CFL a factor than depends on the time integration method. In 3D, for Runge-Kutta 3 is 0.25, for Runge-Kutta 4 is 0.4.
+	// Vmax is the maximum characteristic speed.
+	// Nx is the number of cells in an axis.
+	dt = 6.4E-4
+	// Clustering type (See details below)
+	clustering_type = "BergerRigoutsos" // TileClustering or BergerRigoutsos
+	// Load Balancer (See details below)
+	partitioner_type = "CascadePartitioner" // CascadePartitioner, TreeLoadBalancer or ChopAndPackLoadBalancer
+}
+
+FileWriter {
+	full_dump_mesh {
+		hdf5_dump_interval = 1         //In finest level cycle units
+		hdf5_dump_dirname = "outputDir_mesh"
+		variables = "phi", "Phid_z", "dphi2", "Phid_x", "Phid_y", "Psisf", "phi2", "Psi", "phi22", "vxplus", "vxminus", "vyplus", "vyminus", "vzplus", "vzminus", "vorticity_norm", "d2tphi", "Chi_t", "Chi_x", "Chi_y", "Chi_z", "Chi_norm"      // variables to dump
+	}
+	// Example of 2D output configuration
+	/*slice_0 {
+		plane_normal_axis = 1            //Value must be 1, 2 or 3
+		distance_to_origin = 0          //In domain units
+		variables = "phi", "Phid_z", "dphi2", "Phid_x", "Phid_y", "Psisf", "phi2", "Psi", "phi22", "vxplus", "vxminus", "vyplus", "vyminus", "vzplus", "vzminus", "vorticity_norm", "d2tphi", "Chi_t", "Chi_x", "Chi_y", "Chi_z", "Chi_norm"
+		hdf5_dump_interval = 1 	 	//In finest level cycle units
+		hdf5_dump_dirname = "outputDir_slice0"
+		activate_analysis = TRUE       //TRUE of FALSE to activate analysis variables
+	}*/
+	// Example of Spherical output configuration
+	/*sphere_0 {
+		center = 0, 0, 0            //In domain units
+		radius = 1          //In domain units
+		resolution = 160, 80     // number of points for theta[0,2pi], phi[0,pi]
+		variables = "phi", "Phid_z", "dphi2", "Phid_x", "Phid_y", "Psisf", "phi2", "Psi", "phi22", "vxplus", "vxminus", "vyplus", "vyminus", "vzplus", "vzminus", "vorticity_norm", "d2tphi", "Chi_t", "Chi_x", "Chi_y", "Chi_z", "Chi_norm"
+		hdf5_dump_interval = 1		//In finest level cycle units
+		hdf5_dump_dirname = "outputDir_sphere0"
+		activate_analysis = TRUE       //TRUE of FALSE to activate analysis variables
+	}*/
+	/*integration_0 {
+		variables = "phi", "Phid_z", "dphi2", "Phid_x", "Phid_y", "Psisf", "phi2", "Psi", "phi22", "vxplus", "vxminus", "vyplus", "vyminus", "vzplus", "vzminus", "vorticity_norm", "d2tphi", "Chi_t", "Chi_x", "Chi_y", "Chi_z", "Chi_norm"
+		calculation = "INTEGRAL", "L2NORM", "MIN", "MAX", "ABSMIN", "ABSMAX"
+		ascii_dump_interval = 1		//In finest level cycle units
+		ascii_dump_dirname = "outputDir_integral"
+		activate_analysis = TRUE       //TRUE of FALSE to activate analysis variables
+	}*/
+	/*point_0 {
+		variables = "phi", "Phid_z", "dphi2", "Phid_x", "Phid_y", "Psisf", "phi2", "Psi", "phi22", "vxplus", "vxminus", "vyplus", "vyminus", "vzplus", "vzminus", "vorticity_norm", "d2tphi", "Chi_t", "Chi_x", "Chi_y", "Chi_z", "Chi_norm"
+		coordinates = 0, 0, 0            //In domain units
+		ascii_dump_interval = 1		//In finest level cycle units
+		ascii_dump_dirname = "outputDir_point"
+		activate_analysis = TRUE       //TRUE of FALSE to activate analysis variables
+	}*/
+}
+
+TimeRefinementIntegrator{
+	// Number of timesteps between each regrid of the hierarchy (in coarsest level units)
+	regrid_interval = 1
+	// Array of integer values (one for each level that may be refined) representing the number of cells by which tagged cells are buffered before clustering into boxes.
+	tag_buffer = 0, 0, 0
+	// If simulation restart from a checkpoint, the following parameter indicates if TimeRefinementIntegrator database parameters override checkpointed values.
+	read_on_restart = TRUE
+}
+
+CartesianGeometry {
+	// Boxes representing the index space for the entire domain on the coarsest mesh level
+	domain_boxes = [ (0, 0, 0) , (99, 99, 99) ]
+	// Values representing the spatial coordinates of the lower corner of the physical domain.
+	x_lo = -4.0, -4.0, -4.0
+	// Values representing the spatial coordinates of the upper corner of the physical domain.
+	x_up = 4.0, 4.0, 4.0
+	// Parameter given by Simflowny. Do not modify
+	periodic_dimension = 0, 0, 0
+}
+
+StandardTagAndInitialize{
+	// The following parameters sets level initialization and cell tagging routines. Two methods are implemented in Simflowny, REFINE_BOXES (FMR) and GRADIENT_DETECTOR (AMR)
+	// Tagging methods may be activated at specific cycles and/or times. It is possible to use combinations of these two methods (e.g., use gradient detection and static refine boxes at the same cycle/time). 
+	// The order in which they are executed is fixed (gradient detection first, and refine boxes second).
+	// The general input syntax is as follows:
+	//at_0 input section describing a set of tagging methods to apply to a cycle or time
+		//cycle = integer cycle at which the set of tagging methods is activated one of cycle or time must be supplied
+		//time = double time at which the set of tagging methods is activated one of cycle or time must be supplied
+		//tag_0 first tagging method in this set of tagging methods
+			//tagging_method = one of GRADIENT_DETECTOR, REFINE_BOXES, NONE
+			//level_m required if tagging_method is REFINE_BOXES, the static boxes for the mth level
+				//box_0 required domain limits specifying refine domains
+					//x_lo lower end of refinement box
+					//x_up upper end of refinement box
+				//. . .
+			//level_n
+		//. . .
+		//tag_n
+	//. . .
+	//at_n
+
+	// Mixed AMR + FMR example
+	/*at_0{
+		// Activates this configuration from given cycle or time (Only one option allowed)
+		cycle=0
+		//time=0
+		tag_0{       //FMR
+			tagging_method = "REFINE_BOXES"
+			level_0 {
+				box_0 {
+					x_lo = -2.0, -2.0, -2.0     // lower end of refinement box.
+					x_up = 2.0, 2.0, 2.0  // upper end of refinement box.
+				}
+			}
+			level_1 {
+				box_0 {
+					x_lo = -2.0, -2.0, -2.0     // lower end of refinement box.
+					x_up = 2.0, 2.0, 2.0  // upper end of refinement box.
+				}
+			}
+		}
+		tag_1{       //AMR
+			// Configuration parameters of the AMR must be set in problem/regridding database above
+			tagging_method = "GRADIENT_DETECTOR"
+		}
+	}*/
+}
+
+PatchHierarchy {
+	// Maximum number of levels in hierarchy (coarse + refinement).
+	max_levels = 1
+	// Vector with the resolution ratio to next coarser level
+	ratio_to_coarser {
+		level_1 = 2, 2, 2
+	}
+
+	// Largest patch allowed in hierarchy
+	largest_patch_size {
+		level_0 = 1000, 1000, 1000
+	}
+	// Smallest patch allowed in hierarchy
+	smallest_patch_size {
+		level_0 = 10, 10, 10
+	}
+	// Minimum de number of cells between levels
+	proper_nesting_buffer = 1
+}
+
+GriddingAlgorithm {
+}
+
+ChopAndPackLoadBalancer {
+	// Load balancing routines for AMR hierarchy levels based on either uniform or non-uniform workload estimate
+	// String value indicating the type of bin packing to use to map patches to processors. 
+	// Currently, two options are supported: "GREEDY" and "SPATIAL". The "GREEDY" method simply maps each patch (box) to the first processor (bin), in ascending tbox::MPI process number, whose difference between the average workload and its current workload is less than the workload of the patch in question. 
+	// The "SPATIAL" method first constructs an ordering of the patches (boxes) by passing a Morton-type curve through the center of each box. Then, it attempts to map the patches to processors by assigning patches that are near each other on the curve to the same processor. 
+	//bin_pack_method = "SPATIAL"	//SPATIAL or GREEDY
+	// Boolean flag to control chopping of level boxes when the union of the input boxes for the load balancing routine is a single box. The default value is false, which means that the domain will be chopped to make patch boxes based on the (single box) union of the boxes describing the level regardless of the input boxes. 	// When the value is set to true, the domain will be chopped by chopping each of the input boxes.
+	//ignore_level_box_union_is_single_box = FALSE
+}
+
+CascadePartitioner {
+	// Cascade partitioning algorithm. The algorithm is described in the article "Advances in Patch-Based Adaptive Mesh Refinement Scalability"
+	// Tile size when using tile mode. Tile mode restricts box cuts to tile boundaries. Default is 1, which is equivalent to no restriction.
+	//tile_size = 1,1,1
+	// Fraction of ideal load a process can take on in order to reduce box cutting and load movement. Higher values often reduce partitioning time and box count but produce less balanced work loads. 
+	// Surplus work greater than this tolerance can still result due to other constraints, such as minimum box size.	//flexible_load_tolerance = 0.05
+	// This parameter limits how many processes may receive the load of one process in a load distribution cycle. If a process has too much initial load, this limit causes the load to distribute the load over multiple cycles. 
+	// It alleviates the bottle-neck of one process having to work with too many other processes in any cycle.
+	//max_spread_procs = 500
+}
+
+TreeLoadBalancer {
+	// Tree-based load balancer.
+	// Tile size when using tile mode. Tile mode restricts box cuts to tile boundaries. Default is 1, which is equivalent to no restriction
+	//tile_size = 1,1,1
+	// Fraction of ideal load a process can take on in order to reduce box cutting and load movement. Higher values often reduce partitioning time and box count but produce less balanced work loads. 
+	// Surplus work greater than this tolerance can still result due to other constraints, such as minimum box size.
+	//flexible_load_tolerance = 0.05
+	// This parameter limits how many processes may receive the load of one process in a load distribution cycle. If a process has too much initial load, this limit causes the load to distribute the load over multiple cycles. 
+	// It alleviates the bottle-neck of one process having to work with too many other processes in any cycle.
+	//max_cycle_spread_procs = 500
+}
+
+TileClustering {
+	// Tiled patch clustering algorithm
+	// Tile size in the index space of the tag level
+	//tile_size = 8,8,8
+}
+
+BergerRigoutsos {
+	// Asynchronous Berger-Rigoutsos implementation of clustering strategy
+	// Whether to sort the output. This makes the normally non-deterministic ordering deterministic and the results repeatable.
+	//sort_output_nodes = FALSE
+	// The maximum cluster size allowed. This parameter is not critical to clustering but limiting the cluster size may improve performance of load balancing algorithms
+	//max_box_size = 100, 100, 100
+	// Threshold for the ratio of the total number of cells in two boxes into which a box may be split and the number of cells in the original box. 
+	// If that ratio is greater than the combine efficiency, the box will not be split. 
+	// This tolerance helps users avoids splitting up portions of the domain into into very small patches which can increase the overhead of AMR operations. Multiple values in the array are handled similar to efficiency_tolerance.
+	//combine_efficiency = 0.8
+	// Minimum fraction of tagged cells to total cells in boxes used to construct patches on a new level. If the ratio is below the tolerance value, the box may be split into smaller boxes and pieces removed until the ratio becomes greater than or equal to the tolerance. 
+	// This tolerance helps users control the amount of extra refined cells created (beyond those tagged explicitly) that is typical in patch-based AMR computations. The index of the value in the array corresponds to the number of the level to which the tolerance value applies. 
+	// If more values are given than the maximum number of levels allowed in the hierarchy, extra values will be ignored. If fewer values are given, then the last value given will be used for each level without a specified input value. For example, if only a single value is specified, then that value will be used on all levels.
+	//efficiency_tolerance = 0.8
+}
+
+TimerManager{
+	// This database includes some time printing for profiling purposes. It details the time the simulation spends writing to disk, regridding and performing the calculations.
+	// List of the active timers. The user can remove any not desired.
+	timer_list = "OutputGeneration", "Regridding", "Step"
+	// Timers that use up less than print_threshold percent of the overall run time are not printed.
+	print_threshold = 0
+	// Print times measured on individual processors.
+	print_processor = FALSE
+	// Print maximum time spent on any processor, and the processor ID that incurred the time
+	print_max = TRUE
+}

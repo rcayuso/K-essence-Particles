@@ -1,0 +1,2 @@
+make
+./Kessence_particles_hyperbolized_tanh_to_evol_test_mu problem.input

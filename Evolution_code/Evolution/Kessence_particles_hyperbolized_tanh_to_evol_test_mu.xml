@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mms:generatedCode xmlns:mms="urn:mathms">
+   <mms:head>
+      <mms:name>Kessence_particles_hyperbolized_tanh_to_evol_test_mu</mms:name>
+      <mms:id>fabac5bc-bb3b-3145-a3e0-1ecbce1c7fd0</mms:id>
+      <mms:author>Miguel Bezares &amp;amp;amp; Ramiro Cayuso</mms:author>
+      <mms:version>28</mms:version>
+      <mms:date>2025-11-18T14:23:13</mms:date>
+      <mms:platform>simPlatSAMRAI</mms:platform>
+   </mms:head>
+   <mms:codeId>2502</mms:codeId>
+</mms:generatedCode>

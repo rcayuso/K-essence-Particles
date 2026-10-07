@@ -1,0 +1,6 @@
+First run the 1D_solver_interactions_not_turned_off_at_interior with the desired Mass.
+Then run 1D_solver (where interactions have been turned off in a region inside the star, you can modify those parameters), and compare the value of psi at the last point of the grid, you want this to match withc the value obtained in the run with 1D_solver_interactions_not_turned_off_at_interior. These values will be printed in terminal at the end of each run. To make the value from the 1D_solver sun match that of 1D_solver_interactions_not_turned_off_at_interior, you typically have to decrease the Mass parameter in the pars.in file to something smaller. I do this by hand since the runs are very quick. You want this values to match since what we ultimately want is that the asymptotics of both solutions match. 
+
+Then you run ascii2hdf5_ramiro.py in 1D_solver and will obtain two .h5 files, copy this and paste them on the 3D solver relaxation ID code. Make sure the parameters of the 1D code and the 3D code are the same. 
+
+There is one small detail. Lets say you found that the M you had to set in 1D_solver is M=M_original*factor  then you have to normalize the massfactor in ID_Relaxation_3D_code/problem.input by a massfactor/factor

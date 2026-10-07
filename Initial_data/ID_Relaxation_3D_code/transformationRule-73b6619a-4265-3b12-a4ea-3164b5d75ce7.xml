@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mms:transformationRule xmlns:mms="urn:mathms">
+   <mms:head>
+      <mms:name>RK4 Delta2</mms:name>
+      <mms:id>73b6619a-4265-3b12-a4ea-3164b5d75ce7</mms:id>
+      <mms:author>Miquel Trias</mms:author>
+      <mms:version>1</mms:version>
+      <mms:date>2012-05-04T00:00:00</mms:date>
+      <mms:description>Used frequently for astrophysics dept. \ Reference:\http://en.wikipedia.org/wiki/Runge\_kutta \ This is step 2 of 4th order Runge-Kutta formula, returning as out the field's variation</mms:description>
+   </mms:head>
+   <mms:functionParameters>
+      <mms:functionParameter>
+         <mms:name>RHS</mms:name>
+         <mms:type>real</mms:type>
+      </mms:functionParameter>
+      <mms:functionParameter>
+         <mms:name>Qn</mms:name>
+         <mms:type>real</mms:type>
+      </mms:functionParameter>
+   </mms:functionParameters>
+   <mms:rule>
+      <sml:simml xmlns:sml="urn:simml">
+         <sml:return>
+            <mt:math xmlns:mt="http://www.w3.org/1998/Math/MathML">
+               <mt:apply>
+                  <mt:plus/>
+                  <mt:ci>Qn</mt:ci>
+                  <mt:apply>
+                     <mt:divide/>
+                     <mt:apply>
+                        <mt:times/>
+                        <mt:ci>Δ<sml:contTimeCoordinate/>
+                        </mt:ci>
+                        <mt:ci>RHS</mt:ci>
+                     </mt:apply>
+                     <mt:cn>2</mt:cn>
+                  </mt:apply>
+               </mt:apply>
+            </mt:math>
+         </sml:return>
+      </sml:simml>
+   </mms:rule>
+</mms:transformationRule>

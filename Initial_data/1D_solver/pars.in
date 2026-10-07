@@ -1,0 +1,45 @@
+&pars_input
+N =512001
+inigrid = 16 
+nt  = 00000
+lev = 0
+freqsdf = 10
+freqhor =1 
+cfl = 0.25
+disip  = 1.0
+derorder =3
+dderorder =3
+tderorder =3
+qderorder =3
+dissorder=84 
+kappa =2.0 
+tau = 0.02
+amp = 1.0 
+ct = 15.0
+sg = 1.17 
+initime= 0.0
+Mpl = 0.1994711401
+csigma = 1.0
+beta  = 0.0
+cgamma = -1e30
+rin=0.0
+rout=16000.0
+Mass = 1.199
+constr=.true.
+Kretch=.true.
+OutPutFields=.true.
+nofix =.true.
+PHor = 50  
+tracking = .false.
+/
+
+
+
+
+
+
+
+
+
+
+

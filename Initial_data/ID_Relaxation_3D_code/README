@@ -1,0 +1,178 @@
+****************************************************************************
+*  Copyright (C) IAC3-UIB. Licensed under BSD. Please see details at       *
+*  http://www.iac3.eu/simflowny-copyright-and-license                      *
+****************************************************************************
+****************************************************************************
+*                                                                          *
+*                      Code generated for SAMRAI                           *
+*     Structured Adaptive Mesh Refinement Applications Infrastructure      *
+*                   http://www.llnl.gov/CASC/SAMRAI                        *
+*                                                                          *
+****************************************************************************
+
+Overview
+--------
+
+This document describes the Simflowny's generated code for SAMRAI framework as well as the parameters for the simulation.
+
+The downloaded code is already compiled in the machine running Simflowny server.
+The user may want to manually modify the code and compile it again using the MAKEFILE providen.
+
+As a C++ code, files may have .cpp and .h extension, both refering to the same class. The .h files declares the functions and variables used within the class, and the .cpp implements the functions. 
+
+Simulation parameters
+---------------------
+
+SAMRAI provides a system to run executions with different parameters providing a parameter file.
+
+Simflowny's code includes a file, problem.input to be used as a reference by the user to set up the parameters desired for the simulations.
+
+The parameters are grouped in different sections.
+
+Problem
+*******
+
+There are the parameters related with the simulation problem defined in Simflowny. In addition, there is a regridding setup subsection.
+There are three implemented regridding types (two adaptative and one fixed). The adaptative parameters are configured in this section:
+
+    - Gradient. A cell will be refined when the gradient of the field on any neighbour cell is greater than the next nearest cell gradient with a compression factor and an offset. The conditional formula is: grad(f_i) > C * MIN(grad(f_i+1), grad(f_i-1)) + O * dx²
+
+    - Function. The cell is refined if the provided field is greater than a given threshold.
+
+Notice that regridding_level_threshold is used to configure from which regridding level this regridding is applied. This is useful to allow combined fixed and adaptative regridding; the user could set a first fixed level, and a second with adaptative regridding.
+
+By default, gradient regridding is commented. Uncomment it and comment function regridding to use it.
+
+Independent from the regridding tagging algorithm, the user may also change the interpolation type to use setting the following parameter:
+
+    - Interpolator. The value chosen must be one of these three: "LINEAR_REFINE", "CONSERVATIVE_LINEAR_REFINE", "CUBIC_REFINE", "QUINTIC_REFINE" or "CONSTANT_REFINE".
+
+Note: The field used in the refinement criteria cannot be from analysis.
+
+Main
+****
+
+This section allows the configuration for the simulation time evolution.
+
+    - output_interval. Interval of screen output of the simulation time.
+    - regridding_interval. Interval to check the regridding condition.
+    - start_from_restart. To indicate when the simulation starts from a restart snapshot.
+    - restart_interval. If greater than 0, indicates the interval to store restart snapshots. It stores the current state of the system to allow simulation recovery.
+    - restart_iteration. When start_from_restart is true, this parameter indicates the step number to start from.
+    - restart_dirname. The directory name for the restart files.
+    - init_from_files. When true, the field of the problem can be read form external hdf5 files. The files should have the same dimension size of the simulation (configured in the next section).
+    - dt. Indicates the time increment between each step in the simulation.
+
+FileWriter
+**********
+
+This is the section to set the configuration for the output to disk.
+
+    - hdf5_dump_interval. To configure the interval for the output files with data.
+    - hdf5_dump_dirname. The directory name for the files.
+    - variables. The variables to write to disk
+
+In problems having analysis fields, the following options appear:
+
+    - hdf5_dump_analysis_interval. To configure the interval for the output files with analysis data.
+    - hdf5_dump_analysis_dirname. The directory name for the analysis output files.
+    - analysis_variables. The analysis variables to write to disk
+
+Simflowny provides a slicing capability for writing 2D slices of 3D data. The user can set as much slices as desired. Each slice has its own properties and must be defined inside its own section slice_x, being x the number of the slice, beginning with 0 and being correlative. The properties of a slice are the following:
+
+    - plane_normal_axis. To select the axis used as the normal of the slice plane. Allowed values are 1, 2, or 3.
+    - distance_to_origin. Used to set the location of the plane. The user must set the value in domain units.
+    - variables. The list of variables to dump for the slice.
+    - hdf5_dump_interval. To configure the interval for the output files with data.
+    - hdf5_dump_dirname. The directory name for the files.
+    - activate_analysis. If set to true, the analysis variables are calculated in the interval of the current slice, so the user can print them out if selected.
+
+Another extra capability is providen to extract a spherical surface from 3D problems. The user can set as much spheres as desired. Each sphere has its own properties and must be defined inside its own section sphere_x, being x the number of the sphere, beginning with 0 and being correlative. The properties of a sphere are the following:
+
+    - center. The center of the sphere in domain units
+    - radius. The radius of the sphere in domain units.
+    - resolution. The number of cells for the 2D projection. Projection domain is [2 * pi, pi], corresponding to angles theta and phi (Description in https://en.wikipedia.org/wiki/Sphere#Equations_in_three-dimensional_space).
+    - variables. The list of variables to dump for the sphere.
+    - hdf5_dump_interval. To configure the interval for the output files with data.
+    - hdf5_dump_dirname. The directory name for the files.
+    - activate_analysis. If set to true, the analysis variables are calculated in the interval of the current sphere, so the user can print them out if selected.
+
+CartesianGeometry
+*****************
+
+In this section the simulation domain is set. Simflowny automatically sets the physical domain with the data set in the problem, but the size of the mesh should be set by the user.
+
+    - domain_boxes. Sets the mesh size, from the initial values to the final ones. The ghost cells needed for calculations are automatically added to the mesh afterwards.
+    - x_lo, x_up. Set by simflowny. Anyway, it can be modified by the user if needed.
+    - periodic_dimension. Already set by Simflowny. Indicates the dimensions that have periodical boundary. It should not be changed by a user since not periodical boundaries are implemented within the code.
+
+StandardTagAndInitialize
+************************
+
+This section is used for regridding purposes. By default, there is an example of a combination for fixed and adaptative regridding.
+Multiple criteria can be set, and even make it active at a certain cycle. Therefore, the subsection at_0 defines the start cycle parameter for this regridding configuration to 0.
+Once defined the starting time for regridding, the criteria is defined. "REFINE_BOXES" stands for fixed regridding, while "GRADIENT_DETECTOR" stands for adaptative.
+
+The box refinement is configured at each level, indicating the begin and end of each coordinate of the domain mesh to regrid. Notice that for descending levels, the number of cells increased with a regridding factor and the configuration must be made with the new cell numeration.
+
+PatchHierarchy
+**************
+
+This section allows the set up of patches, that are mesh divisions.
+
+    - max_levels. Indicates the maximum number of mesh levels. A value of 1 indicates that regridding is disabled. When a value is 2 or more, regridding activates and the number of regridding detail increments.
+    - ratio_to_coarser. To indicate the number of division in each dimension when there is a regridding in the level. More than one line is allowed to provide a different ratio for the levels.
+    - largest_patch_size, smallest_patch_size. To set up the maximum and minimum size of patches in each level. For performance purposes, it is recommended that the maximum size for level_0 was greater than the mesh size.
+
+
+Note: StandardTagAndInitialize, GriddingAlgorithm, LoadBalancer and TimerManager are SAMRAI internal configurations and should not be changed by the user.
+
+
+Compilation
+-----------
+
+If the user modifies the source code or wants to run the code in a different machine from Simflowny server, the Makefile provided eases the task.
+First of all, open it with a text editor and check that the library paths are the same of your system configuration. 
+Once the Makefile is properly configured, open a terminal and execute:
+    $ make
+
+
+Execution
+---------
+
+To run a simulation in a single processor run in a terminal:
+    $ ./binFile parameterFile.input
+where binName is the name of the binary created in the compilation, and parameter.input is the name of the parameter file.
+
+To run multiprocessor run:
+    $ mpirun -np X ./binFile parameterFile.input
+
+where X is the number of processors in which the simulation will run.
+
+File Description
+----------------
+
+* Functions - This class may contain any function from the discretization schema which is not a MACRO function and the extrapolation functions if needed. One-line functions are automatically translated to MACRO functions by Simflowny for performance purposes and are located in the Problem class.
+
+* MainRestartData - This class implements the checkpointing feature. A regular user should not be interested in changing its behaviour.
+
+* Makefile - Makefile is a special format file that together with the make utility will help you to automatically compile this code. It contains the references to the required libraries and should be adapted if any library is installed in a different location from Simflowny server.
+
+* Problem - This class implements the problem simulation routines, from the initialization to finalization checks. It is described in more detail in the following section.
+
+* SAMRAIConnector - Is the main class for the simulation. It joins and manages all SAMRAI components. The user could be interested in modify the behaviour of the output that could not be managed through the simulation parameters.
+
+Problem modification
+--------------------
+
+The following sections describe the most significative functions for an user wanting to manually modify part of the code.
+
+    - Problem::Problem. This function register the simulation variables.
+    - Problem::initializeLevelData. In the end of this function, there are the post-initialization calculations.
+    - Problem::mapDataOnPatch. This section maps the problem regions in the mesh.
+    - Problem::initializeDataOnPatch. Initialization of the fields from the problem equations.
+    - Problem::initializeDataFromFile. Initialization of the fields from external hdf5 files.
+    - Problem::setupPlotter. This function sets the fields and variables that are going to be included in the output data.
+    - Problem::step. This section includes the whole algorithm (discretized problem) that is executed at one time step.
+    - Problem::checkFinalization. Where the finalization condition is implemented.
+    - Problem::applyGradientDetector. Regridding algorithms.

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mms:transformationRule xmlns:mms="urn:mathms">
+   <mms:head>
+      <mms:name>RK4 Delta4</mms:name>
+      <mms:id>95fdb7e9-13ce-3695-806b-ef3d68b27a8e</mms:id>
+      <mms:author>Miquel Trias</mms:author>
+      <mms:version>1</mms:version>
+      <mms:date>2012-05-04T00:00:00</mms:date>
+      <mms:description>Used frequently for astrophysics dept. \ Reference:\http://en.wikipedia.org/wiki/Runge\_kutta \ This is the final step of 4th order Runge-Kutta formula, where all the Delta (variations) contributions are combined to give the time evolved field</mms:description>
+   </mms:head>
+   <mms:functionParameters>
+      <mms:functionParameter>
+         <mms:name>RHS</mms:name>
+         <mms:type>real</mms:type>
+      </mms:functionParameter>
+      <mms:functionParameter>
+         <mms:name>Qn</mms:name>
+         <mms:type>real</mms:type>
+      </mms:functionParameter>
+      <mms:functionParameter>
+         <mms:name>QK1</mms:name>
+         <mms:type>real</mms:type>
+      </mms:functionParameter>
+      <mms:functionParameter>
+         <mms:name>QK2</mms:name>
+         <mms:type>real</mms:type>
+      </mms:functionParameter>
+      <mms:functionParameter>
+         <mms:name>QK3</mms:name>
+         <mms:type>real</mms:type>
+      </mms:functionParameter>
+   </mms:functionParameters>
+   <mms:rule>
+      <sml:simml xmlns:sml="urn:simml">
+         <sml:return>
+            <mt:math xmlns:mt="http://www.w3.org/1998/Math/MathML">
+               <mt:apply>
+                  <mt:plus/>
+                  <mt:apply>
+                     <mt:minus/>
+                     <mt:apply>
+                        <mt:divide/>
+                        <mt:ci>Qn</mt:ci>
+                        <mt:cn>3</mt:cn>
+                     </mt:apply>
+                  </mt:apply>
+                  <mt:apply>
+                     <mt:divide/>
+                     <mt:ci>QK1</mt:ci>
+                     <mt:cn>3</mt:cn>
+                  </mt:apply>
+                  <mt:apply>
+                     <mt:times/>
+                     <mt:cn>2</mt:cn>
+                     <mt:apply>
+                        <mt:divide/>
+                        <mt:ci>QK2</mt:ci>
+                        <mt:cn>3</mt:cn>
+                     </mt:apply>
+                  </mt:apply>
+                  <mt:apply>
+                     <mt:divide/>
+                     <mt:ci>QK3</mt:ci>
+                     <mt:cn>3</mt:cn>
+                  </mt:apply>
+                  <mt:apply>
+                     <mt:divide/>
+                     <mt:apply>
+                        <mt:times/>
+                        <mt:ci>Δ<sml:contTimeCoordinate/>
+                        </mt:ci>
+                        <mt:ci>RHS</mt:ci>
+                     </mt:apply>
+                     <mt:cn>6</mt:cn>
+                  </mt:apply>
+               </mt:apply>
+            </mt:math>
+         </sml:return>
+      </sml:simml>
+   </mms:rule>
+</mms:transformationRule>
